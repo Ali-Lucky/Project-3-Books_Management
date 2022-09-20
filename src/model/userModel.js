@@ -13,17 +13,21 @@ const userSchema = new mongoose.Schema({
     phone: {
         type: String,
         require: true,
-        unique:true
+        unique: true
     },
     email:{
       type: String ,
-      require:true,
-      unique:true 
+      require: true,
+      unique: true 
+    },
+    password:{
+        type: String,
+        require: true
     },
     address:{
         street: String,
-        city:String,
-        pincode:String
+        city: String,
+        pincode: String
     }
 }, { timestamps: true })
 
