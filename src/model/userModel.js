@@ -6,11 +6,11 @@ const userSchema = new mongoose.Schema({
         require: true,
         enum:['Mr','Mrs','Miss']
     },
-    Name: {
+    name: {
         type: String,
         require: true
     },
-    Phone: {
+    phone: {
         type: String,
         require: true,
         unique:true
