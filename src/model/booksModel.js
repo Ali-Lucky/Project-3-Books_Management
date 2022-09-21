@@ -45,8 +45,7 @@ const bookSchema = new mongoose.Schema({
     },
     releasedAt: {
         type: Date,
-        require: true,
-        default: null
+        require: true
     },
 }, { timestamps: true })
 
