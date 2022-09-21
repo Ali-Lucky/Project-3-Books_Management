@@ -5,6 +5,7 @@ const { createBook, getBooks } = require('../controller/bookController')
 const { userValidation, logInValidation, bookValidation } = require('../middleware/validator')
 const { authentication } = require('../middleware/commonMiddleware')
 
+router.post("/register",Validator.userValidation, userController.createUser)
 
 
 //**    APIS   **//
