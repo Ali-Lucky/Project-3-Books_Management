@@ -1,6 +1,8 @@
 const userModel = require('../model/userModel')
 const JWT = require('jsonwebtoken')
 
+////////////////////////////////////////////////// Create User ///////////////////////////////////////////////////////////
+
 const createUser = async function(req, res) {
     try {
         const data = req.body
@@ -11,6 +13,8 @@ const createUser = async function(req, res) {
         return res.status(500).send({ status: false, error: error.message })
     }
 }
+
+/////////////////////////////////////////////// Login User ///////////////////////////////////////////////////////////////
 
 const login = async (req, res) => {
     try {
