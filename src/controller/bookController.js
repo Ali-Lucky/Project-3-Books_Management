@@ -25,4 +25,12 @@ const getBooks = async (req, res) => {
     }
 }
 
+///////////////////////////////////////////////////// grtBooks by Id //////////////////////////////////////////////////////
+
+// const getBooksById = async function(req, res) {
+//     try {
+
+//     }
+// }
+
 module.exports = { createBook, getBooks }

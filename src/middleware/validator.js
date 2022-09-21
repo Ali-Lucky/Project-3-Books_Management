@@ -35,6 +35,11 @@ const isValidISBN = function (body) {
     return nameRegex.test(body)
 }
 
+const isValidDate = function (body) {
+    const dateRegex = /^\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$/;
+    return dateRegex.test(body)
+}
+
 ///////////////////////////////////////////////  User Validation  ///////////////////////////////////////////////////////////
 
 const userValidation = async function (req, res, next) {
@@ -120,6 +125,8 @@ const bookValidation = async function (req, res, next) {
         const isISBNalreadyUsed = await BookModel.findOne({ ISBN })
         if (isISBNalreadyUsed) return res.status(400).send({ status: false, msg: "ISBN is already used"})
         if (!isValidISBN(ISBN)) return res.status(404).send({ status: false, msg: "Invalid ISBN" })
+
+        if (!isValidDate(releasedAt)) return res.status(400).send({ status: false, msg: "Please send releasedAt in 'YYYY-MM-DD' format" })
     
         next();
     }
