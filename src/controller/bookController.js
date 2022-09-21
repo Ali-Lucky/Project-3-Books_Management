@@ -1,4 +1,5 @@
 const BookModel = require('../model/booksModel')
+const moment = require('moment')
 
 /////////////////////////////////////////////////// Create Book /////////////////////////////////////////////////////////////
 
@@ -6,6 +7,10 @@ const createBook = async function(req, res) {
     try{
         const data = req.body
         const savedData = await BookModel.create(data)
+        if (isDeleted === false) {
+            savedData.releasedAt = moment().format("YYYY-MM-DD");
+            savedData.save();
+        }
         return res.status(201).send( {status: true, msg: savedData })
     } catch (error) {
         return res.status(500).send({ status: false, error: error.message })
