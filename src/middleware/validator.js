@@ -120,11 +120,11 @@ const bookValidation = async function (req, res, next) {
         if (!isValidTitle(title)) return res.status(404).send({ status: false, msg: "Invalid title" })
     
         const validateUserId = await UserModel.findById(userId)
-        if (!validateUserId) return res.status(400).send({ status: false, msg: "userId is invalid" })
+        if (!validateUserId) return res.status(400).send({ status: false, msg: "User not found" })
     
         const isISBNalreadyUsed = await BookModel.findOne({ ISBN })
         if (isISBNalreadyUsed) return res.status(400).send({ status: false, msg: "ISBN is already used"})
-        if (!isValidISBN(ISBN)) return res.status(404).send({ status: false, msg: "Invalid ISBN" })
+        if (!isValidISBN(ISBN)) return res.status(404).send({ status: false, msg: "ISBN must have 10 or 13 numbers" })
 
         if (!isValidDate(releasedAt)) return res.status(400).send({ status: false, msg: "Please send releasedAt in 'YYYY-MM-DD' format" })
     

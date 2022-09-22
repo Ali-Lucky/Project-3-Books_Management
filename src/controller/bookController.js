@@ -51,20 +51,20 @@ const getBooksById = async function(req, res) {
 
 ////////////////////////////////////////////////////// Update Books ///////////////////////////////////////////////////////
 
-// const isValidTitle = function (body) {
-//     const nameRegex = /^[a-zA-Z_ ]*$/;
-//     return nameRegex.test(body)
-// }
+const isValidTitle = function (body) {
+    const nameRegex = /^[a-zA-Z_ ]*$/;
+    return nameRegex.test(body)
+}
 
-// const isValidISBN = function (body) {
-//     const nameRegex = /^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$/;
-//     return nameRegex.test(body)
-// }
+const isValidISBN = function (body) {
+    const nameRegex = /^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$/;
+    return nameRegex.test(body)
+}
 
-// const isValidDate = function (body) {
-//     const dateRegex = /^\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$/;
-//     return dateRegex.test(body)
-// }
+const isValidDate = function (body) {
+    const dateRegex = /^\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$/;
+    return dateRegex.test(body)
+}
 
 const updateBooks =  async function (req, res) {
     try {
@@ -76,19 +76,29 @@ const updateBooks =  async function (req, res) {
         let details = req.body
         if (Object.keys(details) == 0) return res.status(400).send({ status: false, msg: "Please provide details" })
 
-        if (findBook.title == details.title) return res.status(404).send({ status: false, msg: "Title is already used" })
-        if (findBook.ISBN == details.ISBN) return res.status(404).send({ status: false, msg: "ISBN is already used" })
-
-        // if (!isValidTitle(details.title)) return res.status(404).send({ status: false, msg: "Invalid title" })
-        // if (!isValidDate(details.releasedAt)) return res.status(404).send({ status: false, msg: "Invalid releasedAt" })
-        // if (!isValidISBN(details.ISBN)) return res.status(404).send({ status: false, msg: "Invalid ISBN" })
+        if (details.title) {
+            let bookTitle = await BookModel.findOne({ title: details.title })
+            console.log(bookTitle)
+            if (bookTitle) return res.status(404).send({ status: false, msg: "Title is already used" })
+            if (!isValidTitle(details.title)) return res.status(404).send({ status: false, msg: "Invalid title" })
+        }
+        
+        if (details.releasedAt) {
+            if (!isValidDate(details.releasedAt)) return res.status(404).send({ status: false, msg: "Please update releasedAt in 'YYYY-MM-DD' format" })
+        }
+        
+        if (details.ISBN) {
+            let bookISBN = await BookModel.findOne({ ISBN: details.ISBN })
+            if (bookISBN) return res.status(404).send({ status: false, msg: "ISBN is already used" })
+            if (!isValidISBN(details.ISBN)) return res.status(404).send({ status: false, msg: "ISBN must have 10 or 13 numbers" })
+        }
 
         let updatedBook = await BookModel.findOneAndUpdate(
             { _id: bookId },
             { $set: {title: details.title, excerpt:details.excerpt, releasedAt: details.releasedAt, ISBN: details.ISBN }} , { new: true }
         )
 
-        return res.status(201).send({ status: false, msg: updatedBook})
+        return res.status(200).send({ status: false, msg: updatedBook})
     } catch (error) {
         return res.status(500).send({ msg: error.message });
       }
@@ -104,7 +114,7 @@ const deleteBookById = async (req, res) => {
         if (book.isDeleted == true) return res.status(404).send({ status: false, msg: "Book is already deleted" })
 
         let deletedBook = await BookModel.findOneAndUpdate({ _id: bookId }, { $set: { isDeleted: true, deletedAt: Date.now() } }, { new: true })
-        return res.status(200).send({ status: true , msg:"Book is deleted successfully" })
+        return res.status(200).send({ status: true , msg: "Book is deleted successfully" })
     } catch (error) {
         return res.status(500).send({ msg: error.message });
     }

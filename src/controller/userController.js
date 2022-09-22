@@ -29,11 +29,14 @@ const login = async (req, res) => {
             {
                 userId: user._id.toString(),
                 iat: Math.floor(Date.now() / 1000),exp: Math.floor(Date.now() / 1000) + 10000 * 600 * 600
+                // userStatus: "active",
+                // iat:Date.now()
 
                 // creationTime: Date.now(),
                 // type: 'book-management'
             },
-            "-- plutonium-- project-book-management -- secret-token --"
+            "-- plutonium-- project-book-management -- secret-token --",
+            // {expiresIn: "120s"}
     )
         res.setHeader("x-api-key", token);
 

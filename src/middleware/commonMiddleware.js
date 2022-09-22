@@ -40,11 +40,7 @@ const authorisation = async (req, res, next) => {
         
         // checking with two id's that author who is requesting route and whose data in token are the same
         if (loggedInUser != requestingUser) return res.status(404).send({ status: false, msg: "User is not authorised" })
-
-
-
         next()
-
     } catch (err) {
         res.status(500).send({ status: "error", error: err.message });
     }
