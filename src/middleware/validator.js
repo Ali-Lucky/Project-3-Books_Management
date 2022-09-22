@@ -68,7 +68,7 @@ const userValidation = async function (req, res, next) {
     
         const isEmailAlreadyUsed = await UserModel.findOne({email})
         if (isEmailAlreadyUsed) return res.status(404).send({ status: false, msg: "Email is already used" })
-        if (!Password) return res.status(404).send({ status: false, msg: "Invalid password" })
+        if (!Password) return res.status(404).send({ status: false, msg: "Password must have 8 to 15 characters with at least one lowercase, uppercase, numeric value and a special character" })
 
         next();
 

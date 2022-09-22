@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const { createUser, login } = require('../controller/userController')
-const { createBook, getBooks, getBooksById } = require('../controller/bookController')
+const { createBook, getBooks, getBooksById, updateBooks, deleteBookById } = require('../controller/bookController')
 const { userValidation, logInValidation, bookValidation } = require('../middleware/validator')
-const { authentication } = require('../middleware/commonMiddleware')
+const { authentication, authorisation } = require('../middleware/commonMiddleware')
 
 
 ////////////////////////////////////////////////////////  APIS  /////////////////////////////////////////////////////////////////
@@ -18,5 +18,7 @@ router.post("/login", logInValidation, login)
 router.post("/books", authentication, bookValidation, createBook)
 router.get("/books", authentication, getBooks)
 router.get("/books/:bookId", authentication, getBooksById)
+router.put("/books/:bookId", authentication, authorisation, updateBooks)
+router.delete("/books/:bookId", authentication, authorisation, deleteBookById)
 
 module.exports = router;   

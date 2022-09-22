@@ -1,5 +1,8 @@
 const JWT = require('jsonwebtoken')
+const ObjectId = require('mongoose').Types.ObjectId
+const BookModel = require('../model/booksModel')
 
+//////////////////////////////////////////////////// Authentication //////////////////////////////////////////////////////
 
 const authentication = async (req, res, next) => {
     try {
@@ -18,5 +21,33 @@ const authentication = async (req, res, next) => {
     }
 }
 
+//////////////////////////////////////////////////// Authorisation ///////////////////////////////////////////////////////
 
-module.exports = { authentication }
+const authorisation = async (req, res, next) => {
+
+    try {
+
+        // extracting the userId from the validateToken's sent data( req.validateToken.AuthorId )
+        let loggedInUser = req.validateToken.userId
+
+        let bookId = req.params.bookId
+        if (!ObjectId.isValid(bookId)) return res.status(400).send({ status: false, msg: "Invalid bookId" })
+        
+        let book = await BookModel.findById(bookId)
+        if (!book) return res.status(400).send({ status: false, msg: "Book does not exists" })
+
+        let requestingUser = book.userId
+        
+        // checking with two id's that author who is requesting route and whose data in token are the same
+        if (loggedInUser != requestingUser) return res.status(404).send({ status: false, msg: "User is not authorised" })
+
+
+
+        next()
+
+    } catch (err) {
+        res.status(500).send({ status: "error", error: err.message });
+    }
+}
+
+module.exports = { authentication, authorisation }
