@@ -7,8 +7,8 @@ const ObjectId = require('mongoose').Types.ObjectId
 
 const createBook = async function(req, res) {
     try{
-        const data = req.body
-        const savedData = await BookModel.create(data)
+        let data = req.body
+        let savedData = await BookModel.create(data)
         return res.status(201).send( {status: true, msg: savedData })
     } catch (error) {
         return res.status(500).send({ status: false, error: error.message })
@@ -33,11 +33,12 @@ const getBooks = async function(req, res) {
 const getBooksById = async function(req, res) {
     try {
         let bookId = req.params.bookId
+
         if (!ObjectId.isValid(bookId)) return res.status(400).send({ status: false, msg: "Invalid bookId" })
 
         let bookDetails = await BookModel.findById(bookId)
         if (!bookDetails || bookDetails.isDeleted === true ) {
-            return res.status(400).send({ status: false, msg: "Book not found" })
+            return res.status(400).send({ status: false, msg: "Book does not exist" })
         }
 
         let reviewDetails = await ReviewModel.find({ bookId: bookDetails._id, isDeleted: false });
@@ -69,16 +70,12 @@ const isValidDate = function (body) {
 const updateBooks =  async function (req, res) {
     try {
         let bookId = req.params.bookId
-
-        let findBook = await BookModel.findById(bookId)
-        if (findBook.isDeleted == true) return res.status(404).send({ status: false, msg: "requested book is already deleted" })       
         
         let details = req.body
-        if (Object.keys(details) == 0) return res.status(400).send({ status: false, msg: "Please provide details" })
+        if (Object.keys(details).length == 0) return res.status(400).send({ status: false, msg: "Please provide details" })
 
         if (details.title) {
             let bookTitle = await BookModel.findOne({ title: details.title })
-            console.log(bookTitle)
             if (bookTitle) return res.status(404).send({ status: false, msg: "Title is already used" })
             if (!isValidTitle(details.title)) return res.status(404).send({ status: false, msg: "Invalid title" })
         }
@@ -110,8 +107,8 @@ const updateBooks =  async function (req, res) {
 const deleteBookById = async (req, res) => {
     try {
         let bookId = req.params.bookId
-        let book = await BookModel.findById(bookId)
-        if (book.isDeleted == true) return res.status(404).send({ status: false, msg: "Book is already deleted" })
+        // let book = await BookModel.findById(bookId)
+        // if (book.isDeleted == true) return res.status(404).send({ status: false, msg: "Book is already deleted" })
 
         let deletedBook = await BookModel.findOneAndUpdate({ _id: bookId }, { $set: { isDeleted: true, deletedAt: Date.now() } }, { new: true })
         return res.status(200).send({ status: true , msg: "Book is deleted successfully" })

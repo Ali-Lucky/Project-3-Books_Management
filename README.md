@@ -153,7 +153,6 @@ Refer below sample
   status: true,
   message: 'Success',
   data: {
-
   }
 }
 ```

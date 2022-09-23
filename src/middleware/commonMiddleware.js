@@ -34,7 +34,8 @@ const authorisation = async (req, res, next) => {
         if (!ObjectId.isValid(bookId)) return res.status(400).send({ status: false, msg: "Invalid bookId" })
         
         let book = await BookModel.findById(bookId)
-        if (!book) return res.status(400).send({ status: false, msg: "Book does not exists" })
+        if (!book) return res.status(400).send({ status: false, msg: "Book does not exist" })
+        if (book.isDeleted == true) return res.status(404).send({ status: false, msg: "requested book is already deleted" })
 
         let requestingUser = book.userId
         
