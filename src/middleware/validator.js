@@ -52,28 +52,28 @@ const userValidation = async function (req, res, next) {
         let userDetails = req.body
         let { title, name, phone, email, password, address, ...rest } = { ...userDetails };
     
-        if (Object.keys(rest) !=0 ) return res.status(404).send({ status: false, msg: "Please provide required details only => title, name, phone, email, password & address"})
+        if (Object.keys(rest) !=0 ) return res.status(400).send({ status: false, msg: "Please provide required details only => title, name, phone, email, password & address"})
         if (Object.keys(userDetails) == 0) return res.status(404).send({ status: false, msg: "Please provide details" })
     
-        if (!title) return res.status(404).send({ status: false, msg: "title is required" })
-        if (!['Mr','Miss','Mrs'].includes(title)) return res.status(404).send({ status: false, msg: "Please provide title between [Mr / Miss / Mrs]"})
-        if (!name) return res.status(404).send({ status: false, msg: "name is required" })
-        if (!phone) return res.status(404).send({ status: false, msg: "phone is required" })
-        if (!email) return res.status(404).send({ status: false, msg: "email is required" })
-        if (!password) return res.status(404).send({ status: false, msg: "password is required" })
+        if (!title) return res.status(400).send({ status: false, msg: "title is required" })
+        if (!['Mr','Miss','Mrs'].includes(title)) return res.status(400).send({ status: false, msg: "Please provide title between [Mr / Miss / Mrs]"})
+        if (!name) return res.status(400).send({ status: false, msg: "name is required" })
+        if (!phone) return res.status(400).send({ status: false, msg: "phone is required" })
+        if (!email) return res.status(400).send({ status: false, msg: "email is required" })
+        if (!password) return res.status(400).send({ status: false, msg: "password is required" })
         
         let [Name, Phone, Email, Password] = [ isValidName(name), isValidPhone(phone), isValidEmail(email), isValidPassword(password) ];
     
-        if (!Name) return res.status(404).send({ status: false, msg: "Invalid name" })
-        if (!Phone) return res.status(404).send({ status: false, msg: "Invalid phone" })
+        if (!Name) return res.status(400).send({ status: false, msg: "Invalid name" })
+        if (!Phone) return res.status(400).send({ status: false, msg: "Invalid phone" })
     
         const isPhoneAlreadyUsed = await UserModel.findOne({phone})
         if (isPhoneAlreadyUsed) return res.status(404).send({ status: false, msg: "Phone is already used" })
-        if (!Email) return res.status(404).send({ status: false, msg: "Invalid email" })
+        if (!Email) return res.status(400).send({ status: false, msg: "Invalid email" })
     
         const isEmailAlreadyUsed = await UserModel.findOne({email})
         if (isEmailAlreadyUsed) return res.status(404).send({ status: false, msg: "Email is already used" })
-        if (!Password) return res.status(404).send({ status: false, msg: "Password must have 8 to 15 characters with at least one lowercase, uppercase, numeric value and a special character" })
+        if (!Password) return res.status(400).send({ status: false, msg: "Password must have 8 to 15 characters with at least one lowercase, uppercase, numeric value and a special character" })
 
         next();
 
@@ -110,26 +110,27 @@ const bookValidation = async function (req, res, next) {
     
         if (Object.keys(rest) != 0) return res.status(400).send({ status: false, msg: "Please provide required details only => title, excerpt, userId, ISBN, category, subcategory, reviews & releasedAt" })
         if (Object.keys(bookDetails) == 0) return res.status(400).send({ status: false, msg: "Please provide details" })
+        if (!userId) return res.status(400).send({ status: false, msg: "userId is required" })
         if (!ObjectId.isValid(userId)) return res.status(400).send({ status: false, msg: "Invalid userId" })
     
-        if (!title) return res.status(404).send({ status: false, msg: "title is required" })
-        if (!excerpt) return res.status(404).send({ status: false, msg: "excerpt is required" })
-        if (!userId) return res.status(404).send({ status: false, msg: "userId is required" })
-        if (!ISBN) return res.status(404).send({ status: false, msg: "ISBN is required" })
-        if (!category) return res.status(404).send({ status: false, msg: "category is required" })
-        if (!subcategory) return res.status(404).send({ status: false, msg: "subcategory is required" })
-        if (!releasedAt) return res.status(404).send({ status: false, msg: "release date is required" })
+        if (!title) return res.status(400).send({ status: false, msg: "title is required" })
+        if (!excerpt) return res.status(400).send({ status: false, msg: "excerpt is required" })
+        
+        if (!ISBN) return res.status(400).send({ status: false, msg: "ISBN is required" })
+        if (!category) return res.status(400).send({ status: false, msg: "category is required" })
+        if (!subcategory) return res.status(400).send({ status: false, msg: "subcategory is required" })
+        if (!releasedAt) return res.status(400).send({ status: false, msg: "release date is required" })
     
         const isTitleAlreadyUsed = await BookModel.findOne({ title })
         if (isTitleAlreadyUsed) return res.status(400).send({ status: false, msg: "Title is already used" })
-        if (!isValidTitle(title)) return res.status(404).send({ status: false, msg: "Invalid title" })
+        if (!isValidTitle(title)) return res.status(400).send({ status: false, msg: "Invalid title" })
     
         const validateUserId = await UserModel.findById(userId)
         if (!validateUserId) return res.status(400).send({ status: false, msg: "User not found" })
     
         const isISBNalreadyUsed = await BookModel.findOne({ ISBN })
         if (isISBNalreadyUsed) return res.status(400).send({ status: false, msg: "ISBN is already used"})
-        if (!isValidISBN(ISBN)) return res.status(404).send({ status: false, msg: "ISBN must have 10 or 13 numbers" })
+        if (!isValidISBN(ISBN)) return res.status(400).send({ status: false, msg: "ISBN must have 10 or 13 numbers" })
 
         if (!isValidDate(releasedAt)) return res.status(400).send({ status: false, msg: "Please send release date in 'YYYY-MM-DD' format" })
     
@@ -148,7 +149,7 @@ const reviewValidation = async function (req, res, next) {
         if (!ObjectId.isValid(book_Id)) return res.status(400).send({ status: false, msg: "Invalid bookId" })
 
         let book = await BookModel.findById(book_Id)
-        if (!book || book.isDeleted === true ) {
+        if (!book || book.isDeleted == true ) {
             return res.status(400).send({ status: false, msg: "Book does not exist" })
         }
 

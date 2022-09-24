@@ -38,7 +38,7 @@ const getBooksById = async function(req, res) {
 
         let bookDetails = await BookModel.findById(bookId)
         if (!bookDetails || bookDetails.isDeleted === true ) {
-            return res.status(400).send({ status: false, msg: "Book does not exist" })
+            return res.status(404).send({ status: false, msg: "Book does not exist" })
         }
 
         let reviewDetails = await ReviewModel.find({ bookId: bookDetails._id, isDeleted: false });
@@ -76,18 +76,18 @@ const updateBooks =  async function (req, res) {
 
         if (details.title) {
             let bookTitle = await BookModel.findOne({ title: details.title })
-            if (bookTitle) return res.status(404).send({ status: false, msg: "Title is already used" })
+            if (bookTitle) return res.status(400).send({ status: false, msg: "Title is already used" })
             if (!isValidTitle(details.title)) return res.status(404).send({ status: false, msg: "Invalid title" })
         }
         
         if (details.releasedAt) {
-            if (!isValidDate(details.releasedAt)) return res.status(404).send({ status: false, msg: "Please update releasedAt in 'YYYY-MM-DD' format" })
+            if (!isValidDate(details.releasedAt)) return res.status(400).send({ status: false, msg: "Please update releasedAt in 'YYYY-MM-DD' format" })
         }
         
         if (details.ISBN) {
             let bookISBN = await BookModel.findOne({ ISBN: details.ISBN })
-            if (bookISBN) return res.status(404).send({ status: false, msg: "ISBN is already used" })
-            if (!isValidISBN(details.ISBN)) return res.status(404).send({ status: false, msg: "ISBN must have 10 or 13 numbers" })
+            if (bookISBN) return res.status(400).send({ status: false, msg: "ISBN is already used" })
+            if (!isValidISBN(details.ISBN)) return res.status(400).send({ status: false, msg: "ISBN must have 10 or 13 numbers" })
         }
 
         let updatedBook = await BookModel.findOneAndUpdate(

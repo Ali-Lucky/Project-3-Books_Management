@@ -23,7 +23,7 @@ const login = async (req, res) => {
         let {email, password} = { ...credentials }
         
         let user = await userModel.findOne({ email: email, password: password })
-        if (!user) return res.status(404).send({ status: false, msg: "incorrect emailId or password" });
+        if (!user) return res.status(400).send({ status: false, msg: "incorrect emailId or password" });
 
         let token = JWT.sign(
             {
