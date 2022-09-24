@@ -8,6 +8,11 @@ const createReview = async function (req, res) {
     try {
         let data = req.body
         let reviewDetails = await ReviewModel.create(data)
+        if (reviewDetails) {
+            reviewDetails.reviewedAt = Date.now()
+            reviewDetails.save()
+        }
+
         let reviewId = reviewDetails._id
 
         let bookId = req.params.bookId
@@ -50,7 +55,7 @@ const updateReview = async function (req, res) {
         if (bookId != findReview.bookId) return res.status(400).send({ status: false, msg: "bookId & reviewId are not from same book" })
 
         let details = req.body
-        if (Object.keys(details).length == 0) return res.status(400).send({ status: false, msg: "please provide details" })
+        if (Object.keys(details).length == 0) return res.status(400).send({ status: false, msg: "Please provide details" })
 
         if (details.reviewedBy) {
             if (!isValidName(details.reviewedBy)) return res.status(400).send({ status: false, msg: "Inavlid reviewer's name" })
@@ -62,7 +67,7 @@ const updateReview = async function (req, res) {
 
         let updating_ReviewDetail = await ReviewModel.findOneAndUpdate(
             { _id: reviewId },
-            { $set: { review: details.review, rating: details.rating, reviewedBy: details.reviewedBy } }, { new: true, upsert: true })
+            { $set: { review: details.review, rating: details.rating, reviewedBy: details.reviewedBy, reviewedAt: Date.now() } }, { new: true, upsert: true })
 
         let reviewDetail_withBook = await ReviewModel.findOne({ _id: reviewId }).populate('bookId')
         return res.status(200).send({ status: false, msg: reviewDetail_withBook })
@@ -92,7 +97,7 @@ let deleteReview = async function (req, res) {
         let updatingReview = await BookModel.findOneAndUpdate({ _id: bookId }, { $inc: { reviews: -1 } }, { new: true })
         let deletedReview = await ReviewModel.findOneAndUpdate({ _id: reviewId }, { $set: { isDeleted: true, deletedAt: Date.now() } }, { new: true })
 
-        return res.status(200).send({ status: true, msg: "Revies deleted successfully" })
+        return res.status(200).send({ status: true, msg: "Review deleted successfully" })
     } catch (error) {
         return res.status(500).send({ status: false, error: error.message })
     }
