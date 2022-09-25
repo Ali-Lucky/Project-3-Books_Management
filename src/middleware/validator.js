@@ -158,16 +158,18 @@ const reviewValidation = async function (req, res, next) {
 
         if (Object.keys(rest) != 0) return res.status(404).send({ status: false, msg: "Please provide required details only => bookId, reviewedBy, reviewedAt, rating & review" })
         if (Object.keys(reviewDetails) == 0) return res.status(400).send({ status: false, msg: "Please provide details" })
+        if (!bookId) return res.status(400).send({ status: false, msg: "bookId is required" })
         if (!ObjectId.isValid(bookId)) return res.status(400).send({ status: false, msg: "Invalid bookId" })
 
         if (book_Id != bookId) return res.status(400).send({ status: false, msg: "Please provide same bookId in body and params" })
 
-        if (!bookId) return res.status(400).send({ status: false, msg: "bookId is required" })
         if (!rating) return res.status(400).send({ status: false, msg: "Rating is required" })
+        if (!reviewedAt) return res.status(400).send({ status: false, msg: "Review date is required" })
 
         let [ReviewedBy, ReviewedAt, Rating] = [isValidName(reviewedBy), isValidDate(reviewedAt), isValidRating(rating)]
 
         if (!ReviewedBy) return res.status(404).send({ status: false, msg: "Inavlid reviewer's name" })
+        if (!ReviewedAt) return res.status(404).send({ status: false, msg: "Please send review date in 'YYYY-MM-DD' format" })
         if (!Rating) return res.status(404).send({ status: false, msg: "Please give ratings between 1 to 5 only" })
 
         next();

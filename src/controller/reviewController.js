@@ -8,10 +8,6 @@ const createReview = async function (req, res) {
     try {
         let data = req.body
         let reviewDetails = await ReviewModel.create(data)
-        if (reviewDetails) {
-            reviewDetails.reviewedAt = Date.now()
-            reviewDetails.save()
-        }
 
         let reviewId = reviewDetails._id
 
@@ -69,7 +65,7 @@ const updateReview = async function (req, res) {
 
         let updating_ReviewDetail = await ReviewModel.findOneAndUpdate(
             { _id: reviewId },
-            { $set: { review: details.review, rating: details.rating, reviewedBy: details.reviewedBy, reviewedAt: Date.now() } }, { new: true, upsert: true })
+            { $set: { review: details.review, rating: details.rating, reviewedBy: details.reviewedBy } }, { new: true })
 
         let reviewDetail_withBook = await ReviewModel.findOne({ _id: reviewId }).populate('bookId')
         return res.status(200).send({ status: false, msg: reviewDetail_withBook })
