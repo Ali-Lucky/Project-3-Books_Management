@@ -4,7 +4,7 @@ const userSchema = new mongoose.Schema({
     title: {
         type: String,
         require: true,
-        enum:['Mr','Mrs','Miss']
+        enum: ['Mr', 'Mrs', 'Miss']
     },
     name: {
         type: String,
@@ -15,16 +15,16 @@ const userSchema = new mongoose.Schema({
         require: true,
         unique: true
     },
-    email:{
-      type: String ,
-      require: true,
-      unique: true 
+    email: {
+        type: String,
+        require: true,
+        unique: true
     },
-    password:{
+    password: {
         type: String,
         require: true
     },
-    address:{
+    address: {
         street: String,
         city: String,
         pincode: String

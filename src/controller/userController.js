@@ -3,7 +3,7 @@ const JWT = require('jsonwebtoken')
 
 /////////////////////////////////////////////////// Create User ///////////////////////////////////////////////////////////
 
-const createUser = async function(req, res) {
+const createUser = async function (req, res) {
     try {
         const data = req.body
         const savedData = await userModel.create(data)
@@ -19,25 +19,20 @@ const createUser = async function(req, res) {
 const login = async (req, res) => {
     try {
         let credentials = req.body
-        
-        let {email, password} = { ...credentials }
-        
+
+        let { email, password } = { ...credentials }
+
         let user = await userModel.findOne({ email: email, password: password })
         if (!user) return res.status(400).send({ status: false, msg: "incorrect emailId or password" });
 
         let token = JWT.sign(
             {
                 userId: user._id.toString(),
-                iat: Math.floor(Date.now() / 1000),exp: Math.floor(Date.now() / 1000) + 10000 * 600 * 600
-                // userStatus: "active",
-                // iat:Date.now()
-
-                // creationTime: Date.now(),
-                // type: 'book-management'
+                type: 'book-management'
             },
             "-- plutonium-- project-book-management -- secret-token --",
-            // {expiresIn: "120s"}
-    )
+            { expiresIn: "6h" }
+        )
         res.setHeader("x-api-key", token);
 
         return res.status(201).send({ status: true, data: token })

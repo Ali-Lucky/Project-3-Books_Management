@@ -1,4 +1,3 @@
-//=====================Importing Module and Packages=====================//
 const express = require('express');
 const bodyParser = require('body-parser');
 const route = require('./route/route.js');
@@ -9,25 +8,19 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-
-mongoose.connect("mongodb+srv://Lucky:ejIoY6iVVc1sRKbS@cluster0.byhslvl.mongodb.net/Chanchal", {
+mongoose.connect("mongodb+srv://Lucky:ejIoY6iVVc1sRKbS@cluster0.byhslvl.mongodb.net/group4Database", {
     useNewUrlParser: true
 })
     .then(() => console.log("MongoDb is Connected."))
     .catch(error => console.log(error))
 
-
-//===================== Global Middleware for Route =====================//
 app.use('/', route)
 
-//===================== It will Handle error When You input Wrong Route =====================//
 app.use(function (req, res) {
     var err = new Error("Not Found.")
     err.status = 400
-    return res.status(400).send({ status:false, msg: "Path not Found." })
+    return res.status(400).send({ status: false, msg: "Path not Found." })
 })
-
-
 
 app.listen(process.env.PORT || 3000, function () {
     console.log('Express App Running on Port: ' + (process.env.PORT || 3000))

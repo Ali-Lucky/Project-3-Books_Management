@@ -16,13 +16,13 @@ router.post("/login", logInValidation, login)
 
 //  Book apis  //
 
-router.post("/books", authentication, bookValidation, createBook)
+router.post("/books", authentication, authorisation, bookValidation, createBook)
 router.get("/books", authentication, getBooks)
 router.get("/books/:bookId", authentication, getBooksById)
 router.put("/books/:bookId", authentication, authorisation, updateBooks)
 router.delete("/books/:bookId", authentication, authorisation, deleteBookById)
 
-// Review apis //
+//  Review apis  //
 
 router.post("/books/:bookId/review", reviewValidation, createReview)
 router.put("/books/:bookId/review/:reviewId", updateReview)

@@ -20,11 +20,11 @@ const reviewSchema = new mongoose.Schema({
         type: Number,
         require: true
     },
-    review: String ,
+    review: String,
     isDeleted: {
         type: Boolean,
         default: false
     },
 }, { timestamps: true })
 
-module.exports = mongoose.model("Review" , reviewSchema)
+module.exports = mongoose.model("Review", reviewSchema)

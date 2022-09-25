@@ -55,6 +55,8 @@ const updateReview = async function (req, res) {
         if (bookId != findReview.bookId) return res.status(400).send({ status: false, msg: "bookId & reviewId are not from same book" })
 
         let details = req.body
+        let { review, rating, reviewedBy, ...rest } = { ...details }
+        if (Object.keys(rest) != 0) return res.status(400).send({ status: false, msg: "You can update only review, rating & reviewedBy" })
         if (Object.keys(details).length == 0) return res.status(400).send({ status: false, msg: "Please provide details" })
 
         if (details.reviewedBy) {
