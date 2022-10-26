@@ -1,13 +1,24 @@
 const BookModel = require('../model/booksModel')
 const ReviewModel = require('../model/reviewModel')
 const ObjectId = require('mongoose').Types.ObjectId
+const { uploadFile } = require("../aws/awsConfig");
 
 
 /////////////////////////////////////////////////// Create Book /////////////////////////////////////////////////////////////
 
 const createBook = async function (req, res) {
     try {
+        let files = req.files;
         let data = req.body
+        let uploadedFileURL;
+
+        if(files && files.length>0){
+            uploadedFileURL= await uploadFile( files[0] )
+        }
+        else{
+           return res.status(400).send({ msg: "No file found" })
+        }
+        data.bookCover = uploadedFileURL
         let savedData = await BookModel.create(data)
         return res.status(201).send({ status: true, msg: savedData })
     } catch (error) {
@@ -114,4 +125,5 @@ const deleteBookById = async (req, res) => {
         return res.status(500).send({ msg: error.message });
     }
 }
+
 module.exports = { createBook, getBooks, getBooksById, updateBooks, deleteBookById }

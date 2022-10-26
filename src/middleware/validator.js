@@ -108,7 +108,7 @@ const bookValidation = async function (req, res, next) {
         let bookDetails = req.body
         let { title, excerpt, userId, ISBN, category, subcategory, reviews, releasedAt, ...rest } = { ...bookDetails }
 
-        if (Object.keys(rest) != 0) return res.status(400).send({ status: false, msg: "Please provide required details only => title, excerpt, userId, ISBN, category, subcategory, reviews & releasedAt" })
+        // if (Object.keys(rest) != 0) return res.status(400).send({ status: false, msg: "Please provide required details only => title, excerpt, userId, ISBN, category, subcategory, reviews & releasedAt" })
         if (Object.keys(bookDetails) == 0) return res.status(400).send({ status: false, msg: "Please provide details" })
         if (!userId) return res.status(400).send({ status: false, msg: "userId is required" })
         if (!ObjectId.isValid(userId)) return res.status(400).send({ status: false, msg: "Invalid userId" })
